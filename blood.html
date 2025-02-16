@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloodConnect - Blood Donation Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        :root {
+            --primary: #e74c3c; /* Red for blood donation theme */
+            --secondary: #c0392b;
+            --text: #2c3e50;
+            --light-bg: #f9f9f9;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+        }
+
+        /* Header Styles */
+        header {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-bar {
+            background: var(--secondary);
+            color: white;
+            text-align: center;
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            color: var(--primary);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: var(--light-bg);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            min-height: 60vh;
+            padding: 8rem 5% 4rem;
+            color: white;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Blood Donation Form */
+        .donation-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 600px;
+            margin: 2rem auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .donation-form h2 {
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-group button:hover {
+            background: var(--secondary);
+        }
+
+        /* Requests Feed */
+        .requests-feed {
+            padding: 4rem 5%;
+            background: var(--light-bg);
+        }
+
+        .blood-request {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .blood-request p {
+            margin-bottom: 0.5rem;
+        }
+
+        .blood-request strong {
+            color: var(--primary);
+        }
+
+        /* Footer */
+        footer {
+            background: white;
+            padding: 4rem 5%;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 4rem;
+        }
+
+        .footer-section h3 {
+            color: var(--text);
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--gray-400);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid var(--gray-200);
+            color: var(--gray-400);
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        Join the lifesaving mission! Donate blood today.
+    </div>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">BloodConnect</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#donate">Donate</a></li>
+                <li><a href="#requests">Requests</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Save Lives, Donate Blood</h1>
+            <p>Connect with donors and recipients in real-time. Your contribution matters!</p>
+        </div>
+    </section>
+
+    <!-- Blood Donation Form -->
+    <section class="donation-form" id="donate">
+        <h2>Submit a Blood Request</h2>
+        <form id="requestForm">
+            <div class="form-group">
+                <label for="bloodType">Blood Type</label>
+                <select id="bloodType" required>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="urgency">Urgency</label>
+                <select id="urgency" required>
+                    <option value="critical">Critical (Immediate)</option>
+                    <option value="medium">Medium (Within 24 hours)</option>
+                    <option value="low">Low (Within 3 days)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="contact">Contact Number</label>
+                <input type="tel" id="contact" placeholder="Enter your phone number" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Submit Request</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- Requests Feed -->
+    <section class="requests-feed" id="requests">
+        <h2>Recent Blood Requests</h2>
+        <div id="requestsFeed"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#donate">Donate</a></li>
+                    <li><a href="#requests">Requests</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <ul class="footer-links">
+                    <li>Email: support@bloodconnect.com</li>
+                    <li>Phone: 1800-123-4567</li>
+                    <li>Address: 123 Lifesaver Street, Health City, HC 12345</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 BloodConnect. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Blood Donation Connector - Real-Time Matching System
+        const STORAGE_KEYS = {
+            USER_PROFILE: 'bloodDonation_userProfile',
+            BLOOD_REQUESTS: 'bloodDonation_requests',
+            LOCATION_DATA: 'bloodDonation_location'
+        };
+
+        class UserProfile {
+            constructor(role = null, bloodType = null, contact = null) {
+                this.role = role;
+                this.bloodType = bloodType;
+                this.contact = contact;
+                this.location = null;
+                this.lastActive = Date.now();
+            }
+
+            save() {
+                localStorage.setItem(STORAGE_KEYS.USER_PROFILE, JSON.stringify(this));
+            }
+
+            static load() {
+                const data = localStorage.getItem(STORAGE_KEYS.USER_PROFILE);
+                return data ? JSON.parse(data) : new UserProfile();
+            }
+        }
+
+        class BloodRequest {
+            constructor(bloodType, location, urgency, contact) {
+                this.id = Date.now();
+                this.bloodType = bloodType;
+                this.location = location;
+                this.urgency = urgency;
+                this.contact = contact;
+                this.timestamp = new Date().toISOString();
+                this.active = true;
+            }
+
+            static save(requests) {
+                localStorage.setItem(STORAGE_KEYS.BLOOD_REQUESTS, JSON.stringify(requests));
+            }
+
+            static load() {
+                const data = localStorage.getItem(STORAGE_KEYS.BLOOD_REQUESTS);
+                return data ? JSON.parse(data) : [];
+            }
+        }
+
+        class LocationService {
+            static async getCurrentPosition() {
+                return new Promise((resolve, reject) => {
+                    if (!navigator.geolocation) {
+                        reject(new Error('Geolocation not supported'));
+                        return;
+                    }
+                    navigator.geolocation.getCurrentPosition(
+                        position => {
+                            const location = { lat: position.coords.latitude, lng: position.coords.longitude };
+                            localStorage.setItem(STORAGE_KEYS.LOCATION_DATA, JSON.stringify(location));
+                            resolve(location);
+                        },
+                        error => reject(error)
+                    );
+                });
+            }
+        }
+
+        class UIManager {
+            static init() {
+                this.setupEventListeners();
+                this.updateRequestsFeed();
+            }
+
+            static setupEventListeners() {
+                const requestForm = document.getElementById('requestForm');
+                if (requestForm) {
+                    requestForm.addEventListener('submit', (e) => this.handleRequestSubmission(e));
+                }
+            }
+
+            static handleRequestSubmission(event) {
+                event.preventDefault();
+                const bloodType = document.getElementById('bloodType').value;
+                const urgency = document.getElementById('urgency').value;
+                const contact = document.getElementById('contact').value;
+                const location = JSON.parse(localStorage.getItem(STORAGE_KEYS.LOCATION_DATA)) || null;
+
+                if (!/^[6-9]\d{9}$/.test(contact)) {
+                    alert('Please enter a valid 10-digit Indian phone number.');
+                    return;
+                }
+
+                const request = new BloodRequest(bloodType, location, urgency, contact);
+                const requests = BloodRequest.load();
+                requests.push(request);
+                BloodRequest.save(requests);
+
+                this.updateRequestsFeed();
+                RequestTracker.showNotification();
+            }
+
+            static updateRequestsFeed() {
+                const requestsFeed = document.getElementById('requestsFeed');
+                const requests = BloodRequest.load();
+                
+                requestsFeed.innerHTML = requests.map(request => `
+                    <div class="blood-request">
+                        <p><strong>Blood Type:</strong> ${request.bloodType}</p>
+                        <p><strong>Urgency:</strong> ${request.urgency}</p>
+                        <p><strong>Contact:</strong> ${request.contact}</p>
+                    </div>
+                `).join('');
+            }
+        }
+
+        class RequestTracker {
+            static showNotification() {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #4CAF50;
+                    color: white;
+                    padding: 15px 25px;
+                    border-radius: 5px;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                    animation: slideIn 0.5s ease-out;
+                    z-index: 1000;
+                `;
+                notification.textContent = "Request submitted successfully! Check 'My Requests' for status.";
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    notification.style.animation = 'fadeOut 0.5s ease-out';
+                    setTimeout(() => notification.remove(), 500);
+                }, 3000);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            UIManager.init();
+            LocationService.getCurrentPosition().catch(error => console.error('Location error:', error));
+        });
+    </script>
+</body>
+</html>
