@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donation Connector</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Link to CSS file -->
+</head>
+<body>
+    <h1>Blood Donation Connector</h1>
+    
+    <!-- Role Selection -->
+    <div class="role-selection">
+        <button data-role="donor">I am a Donor</button>
+        <button data-role="recipient">I need Blood</button>
+    </div>
+
+    <!-- Blood Request Form -->
+    <form id="requestForm">
+        <label for="bloodType">Blood Type:</label>
+        <select id="bloodType" required>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+        </select>
+        
+        <label for="urgency">Urgency:</label>
+        <select id="urgency" required>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="critical">Critical</option>
+        </select>
+        
+        <label for="contact">Contact Info:</label>
+        <input type="text" id="contact" placeholder="Your Phone or Email" required>
+        
+        <button type="submit">Submit Request</button>
+    </form>
+
+    <!-- Requests Feed -->
+    <div id="requestsFeed"></div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
+
+
