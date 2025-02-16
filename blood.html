@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BloodConnect - Blood Donation Platform</title>
+    <title>BloodConnect - Advanced Blood Donation Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Base Styles */
@@ -98,6 +98,28 @@
             font-size: 1.2rem;
             margin-bottom: 2rem;
             opacity: 0.9;
+        }
+
+        /* Map Section */
+        #map {
+            height: 400px;
+            width: 100%;
+            border-radius: 1rem;
+            margin: 2rem 0;
+        }
+
+        /* Donor Certificate */
+        .certificate {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .certificate h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
         }
 
         /* Blood Donation Form */
@@ -232,8 +254,8 @@
                 <li><a href="#home">Home</a></li>
                 <li><a href="#donate">Donate</a></li>
                 <li><a href="#requests">Requests</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#map">Map</a></li>
+                <li><a href="#certificate">Certificate</a></li>
             </ul>
         </nav>
     </header>
@@ -281,6 +303,18 @@
         </form>
     </section>
 
+    <!-- Map Section -->
+    <section id="map">
+        <h2>Find Nearby Donors</h2>
+        <div id="map"></div>
+    </section>
+
+    <!-- Donor Certificate -->
+    <section class="certificate" id="certificate">
+        <h3>Download Your Donor Certificate</h3>
+        <button id="downloadCertificate">Download</button>
+    </section>
+
     <!-- Requests Feed -->
     <section class="requests-feed" id="requests">
         <h2>Recent Blood Requests</h2>
@@ -313,6 +347,39 @@
     </footer>
 
     <script>
+        // Initialize Google Maps
+        function initMap() {
+            const map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 20.5937, lng: 78.9629 }, // India coordinates
+                zoom: 5,
+            });
+
+            // Add markers for donors
+            const donors = [
+                { lat: 19.0760, lng: 72.8777, name: 'Donor 1' }, // Mumbai
+                { lat: 28.7041, lng: 77.1025, name: 'Donor 2' }, // Delhi
+            ];
+
+            donors.forEach(donor => {
+                new google.maps.Marker({
+                    position: { lat: donor.lat, lng: donor.lng },
+                    map,
+                    title: donor.name,
+                });
+            });
+        }
+
+        // Download Certificate
+        document.getElementById('downloadCertificate').addEventListener('click', () => {
+            alert('Certificate downloaded!');
+        });
+
+        // Load Google Maps API
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyAcKuis4tI1ZMdrkUF_0pChrfuL1HkQdFo&callback=initMap`;
+        script.defer = true;
+        document.head.appendChild(script);
+
         // Blood Donation Connector - Real-Time Matching System
         const STORAGE_KEYS = {
             USER_PROFILE: 'bloodDonation_userProfile',
@@ -456,6 +523,527 @@
             UIManager.init();
             LocationService.getCurrentPosition().catch(error => console.error('Location error:', error));
         });
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Previous meta tags and styles -->
+    <style>
+        /* Add new styles for auth system */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .auth-content {
+            background: white;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .auth-tab.active {
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .close-auth {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--gray-400);
+        }
+
+        .auth-error {
+            color: var(--primary);
+            margin: 0.5rem 0;
+            display: none;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .profile-dropdown {
+            position: relative;
+            display: none;
+        }
+
+        .profile-menu {
+            position: absolute;
+            right: 0;
+            background: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 200px;
+            display: none;
+        }
+
+        .show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Add login button to nav -->
+    <header>
+        <nav>
+            <div class="logo">BloodConnect</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#donate">Donate</a></li>
+                <li><a href="#requests">Requests</a></li>
+                <li><a href="#map">Map</a></li>
+                <li><a href="#certificate">Certificate</a></li>
+            </ul>
+            <div class="auth-section">
+                <button id="loginBtn" class="auth-btn">Login</button>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <img src="https://via.placeholder.com/40" alt="User" class="user-avatar" id="userAvatar">
+                    <div class="profile-menu" id="profileMenu">
+                        <p id="userEmail"></p>
+                        <button onclick="logout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Add auth modal -->
+    <div id="authModal" class="auth-modal">
+        <div class="auth-content">
+            <span class="close-auth" id="closeAuth">&times;</span>
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Login</div>
+                <div class="auth-tab" data-tab="signup">Sign Up</div>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <div class="auth-error" id="loginError"></div>
+                <div class="form-group">
+                    <button type="submit">Login</button>
+                </div>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" class="auth-form">
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+                <div class="auth-error" id="signupError"></div>
+                <div class="form-group">
+                    <button type="submit">Sign Up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Previous content -->
+
+    <script>
+        // Auth System
+        const authModal = document.getElementById('authModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const closeAuth = document.getElementById('closeAuth');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const profileMenu = document.getElementById('profileMenu');
+        const userAvatar = document.getElementById('userAvatar');
+        const userEmail = document.getElementById('userEmail');
+
+        // Mock user data (replace with real auth system)
+        let currentUser = null;
+
+        // Show/hide auth modal
+        loginBtn.addEventListener('click', () => {
+            authModal.style.display = 'block';
+        });
+
+        closeAuth.addEventListener('click', () => {
+            authModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === authModal) {
+                authModal.style.display = 'none';
+            }
+        });
+
+        // Tab switching
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab + 'Form').classList.add('active');
+            });
+        });
+
+        // Login function
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Basic validation
+            if (!validateEmail(email)) {
+                showError('loginError', 'Please enter a valid email');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('loginError', 'Password must be at least 6 characters');
+                return;
+            }
+
+            // Mock login (replace with real auth)
+            currentUser = { email };
+            updateAuthState();
+            authModal.style.display = 'none';
+        });
+
+        // Signup function
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!validateEmail(email)) {
+                showError('signupError', 'Please enter a valid email');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('signupError', 'Password must be at least 6 characters');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('signupError', 'Passwords do not match');
+                return;
+            }
+
+            // Mock signup (replace with real auth)
+            currentUser = { email };
+            updateAuthState();
+            authModal.style.display = 'none';
+        });
+
+        // Logout function
+        function logout() {
+            currentUser = null;
+            updateAuthState();
+        }
+
+        // Update UI based on auth state
+        function updateAuthState() {
+            if (currentUser) {
+                loginBtn.style.display = 'none';
+                profileDropdown.style.display = 'block';
+                userEmail.textContent = currentUser.email;
+            } else {
+                loginBtn.style.display = 'block';
+                profileDropdown.style.display = 'none';
+            }
+        }
+
+        // Profile dropdown toggle
+        userAvatar.addEventListener('click', () => {
+            profileMenu.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!e.target.matches('.user-avatar')) {
+                if (profileMenu.classList.contains('show')) {
+                    profileMenu.classList.remove('show');
+                }
+            }
+        });
+
+        // Helper functions
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 3000);
+        }
+
+        // Initialize auth state
+        updateAuthState();
+    </script>
+</body>
+</html>
+<style>
+    .login-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        background: var(--primary);
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .login-btn:hover {
+        background: var(--primary-dark);
+    }
+
+    .login-btn i {
+        font-size: 18px;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<script>
+    // Update login button to include icon
+    const loginBtn = document.querySelector('.login-btn');
+    if (loginBtn) {
+        loginBtn.innerHTML = '<i class="fas fa-user-circle"></i> Login';
+    }
+</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Donor Certificate</title>
+    <style>
+        /* Certificate Section Styles */
+        .certificate-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 600px;
+            margin: 2rem auto;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .certificate-section h2 {
+            color: #e74c3c;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .form-group button {
+            width: 100%;
+            padding: 0.8rem;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .form-group button:hover {
+            background: #c0392b;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 0.5rem;
+            display: none;
+        }
+    </style>
+    <!-- Include jsPDF library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <!-- Certificate Section -->
+    <section class="certificate-section" id="certificate">
+        <h2>Download Your Donor Certificate</h2>
+        <form id="certificateForm">
+            <div class="form-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" placeholder="Enter your full name" required>
+                <div class="error-message" id="nameError">Please enter a valid name.</div>
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number</label>
+                <input type="tel" id="phoneNumber" placeholder="Enter your phone number" required>
+                <div class="error-message" id="phoneError">Please enter a valid 10-digit phone number.</div>
+            </div>
+            <div class="form-group">
+                <label for="donationDate">Donation Date</label>
+                <input type="date" id="donationDate" required>
+                <div class="error-message" id="dateError">Please select a valid date.</div>
+            </div>
+            <div class="form-group">
+                <button type="submit">Download Certificate</button>
+            </div>
+        </form>
+    </section>
+
+    <script>
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+
+        // Form Validation and PDF Generation
+        document.getElementById('certificateForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            // Get user inputs
+            const fullName = document.getElementById('fullName').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const donationDate = document.getElementById('donationDate').value;
+
+            // Validation flags
+            let isValid = true;
+
+            // Validate Full Name
+            if (fullName === "" || !/^[A-Za-z\s]+$/.test(fullName)) {
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('nameError').style.display = 'none';
+            }
+
+            // Validate Phone Number (Indian format)
+            if (!/^[6-9]\d{9}$/.test(phoneNumber)) {
+                document.getElementById('phoneError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('phoneError').style.display = 'none';
+            }
+
+            // Validate Donation Date
+            if (donationDate === "") {
+                document.getElementById('dateError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('dateError').style.display = 'none';
+            }
+
+            // If all inputs are valid, generate PDF
+            if (isValid) {
+                generateCertificate(fullName, phoneNumber, donationDate);
+            }
+        });
+
+        // Function to Generate PDF Certificate
+        function generateCertificate(name, phone, date) {
+            const doc = new jsPDF();
+
+            // Certificate Design
+            doc.setFontSize(24);
+            doc.setTextColor(231, 76, 60); // Red color
+            doc.text("Blood Donation Certificate", 105, 30, null, null, 'center');
+
+            doc.setFontSize(16);
+            doc.setTextColor(0, 0, 0); // Black color
+            doc.text("This is to certify that", 105, 50, null, null, 'center');
+
+            doc.setFontSize(20);
+            doc.setTextColor(44, 62, 80); // Dark blue color
+            doc.text(name, 105, 70, null, null, 'center');
+
+            doc.setFontSize(16);
+            doc.setTextColor(0, 0, 0); // Black color
+            doc.text("has successfully donated blood on", 105, 90, null, null, 'center');
+
+            doc.setFontSize(18);
+            doc.setTextColor(44, 62, 80); // Dark blue color
+            doc.text(date, 105, 110, null, null, 'center');
+
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0); // Black color
+            doc.text("Contact: " + phone, 105, 130, null, null, 'center');
+
+            doc.setFontSize(12);
+            doc.setTextColor(100, 100, 100); // Gray color
+            doc.text("Thank you for your lifesaving contribution!", 105, 150, null, null, 'center');
+
+            // Save PDF
+            doc.save(`BloodDonationCertificate_${name}.pdf`);
+        }
     </script>
 </body>
 </html>
